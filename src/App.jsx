@@ -10,8 +10,20 @@ export default function App() {
 
   const AddTodos = () => {
     if(input.trim() === '') return;
-    setTodos([...todos, { text: input, done: false}]);
+    setTodos([...todos, { text: input, done: false, createdAt: new Date() }]);
     setInput('');
+  }
+
+  const sortedTodos = () => {
+    return todos.sort((a, b) => {
+      if(a.done === b.done) {
+        return b.createdAt - a.createdAt;
+      } else if(a.done) {
+        return 1;
+      } else {
+        return -1;
+      }
+    })
   }
 
   const handleToggle = (index) => {
@@ -93,7 +105,7 @@ export default function App() {
       </div>
       <div className="todo-list">
         <ul>
-          {todos.map((todo, index) => (
+          {sortedTodos().map((todo, index) => (
             <li key={index} className={openMenuIndex === index ? 'menu-active' : ''}>
               {editIndex === index ? (
                 <>

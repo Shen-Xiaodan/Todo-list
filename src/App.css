@@ -149,7 +149,7 @@ input[type="checkbox"] {
   width: 20px;
   height: 20px;
   cursor: pointer;
-  accent-color: #6c757d;
+  accent-color: #6c737d;
   border-radius: 4px;
 }
 
@@ -390,21 +390,6 @@ input[type="checkbox"] {
     padding: 1rem 1.25rem !important;
     font-size: 0.9rem !important;
   }
-}
-
-/* 空状态样式 */
-.todo-list:empty::after {
-  content: "Add a todo to get started!";
-  display: block;
-  text-align: center;
-  color: #adb5bd;
-  font-style: italic;
-  padding: 3rem;
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(233, 236, 239, 0.5);
-  border-radius: 16px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-  backdrop-filter: blur(10px);
 }
 
 /* 滚动条美化 */
