@@ -1,16 +1,75 @@
 import static spark.Spark.*; //Java HTTP 框架
 import java.sql.*; //Java 数据库连接
 import java.util.*; //Java 集合
+import java.io.*; //文件操作
 import com.google.gson.*; //把对象变成 JSON 发给前端，把前端传来的 JSON 转成 Java 对象操作
 
 public class JavaTodoAPI {
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/TodoList?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC";
-    private static final String DB_USER = "root";
-    private static final String DB_PASSWORD = "password";
+    private static String DB_URL;
+    private static String DB_USER;
+    private static String DB_PASSWORD;
+    private static int SERVER_PORT;
     private static final Gson gson = new Gson();
 
+    // 静态初始化块，在类加载时读取配置文件
+    static {
+        loadConfiguration();
+    }
+
+    /**
+     * 加载配置文件
+     * 优先级：环境变量 > 配置文件 > 默认值
+     */
+    private static void loadConfiguration() {
+        Properties props = new Properties();
+
+        // 首先尝试从配置文件加载
+        try (InputStream input = new FileInputStream("backend/config.properties")) {
+            props.load(input);
+            System.out.println("Configuration file loaded successfully");
+        } catch (IOException e) {
+            System.err.println("Warning: Could not load config.properties file: " + e.getMessage());
+            System.err.println("Will use environment variables or default values");
+        }
+
+        // 从环境变量或配置文件获取值，环境变量优先
+        DB_URL = getConfigValue("DB_URL", props.getProperty("db.url"),
+                "jdbc:mysql://localhost:3306/TodoList?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC");
+        DB_USER = getConfigValue("DB_USER", props.getProperty("db.username"), "root");
+        DB_PASSWORD = getConfigValue("DB_PASSWORD", props.getProperty("db.password"), "password");
+
+        String portStr = getConfigValue("SERVER_PORT", props.getProperty("server.port"), "8080");
+        try {
+            SERVER_PORT = Integer.parseInt(portStr);
+        } catch (NumberFormatException e) {
+            System.err.println("Invalid port number: " + portStr + ", using default 8080");
+            SERVER_PORT = 8080;
+        }
+
+        // 验证必要的配置项
+        if (DB_URL == null || DB_USER == null || DB_PASSWORD == null) {
+            throw new RuntimeException("Database configuration is incomplete. Please check config.properties file or environment variables.");
+        }
+
+        System.out.println("Configuration loaded - Server will run on port: " + SERVER_PORT);
+    }
+
+    /**
+     * 获取配置值，优先级：环境变量 > 配置文件 > 默认值
+     */
+    private static String getConfigValue(String envVar, String propValue, String defaultValue) {
+        String envValue = System.getenv(envVar);
+        if (envValue != null && !envValue.trim().isEmpty()) {
+            return envValue;
+        }
+        if (propValue != null && !propValue.trim().isEmpty()) {
+            return propValue;
+        }
+        return defaultValue;
+    }
+
     public static void main(String[] args) {
-        port(8080); //Java HTTP 服务运行端口
+        port(SERVER_PORT); //Java HTTP 服务运行端口
 
         // 启用CORS
         before((request, response) -> {

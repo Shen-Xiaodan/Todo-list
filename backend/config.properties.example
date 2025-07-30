@@ -1,0 +1,19 @@
+# 数据库配置示例文件
+# 复制此文件为 config.properties 并修改为实际的配置值
+
+# 数据库配置
+db.url=jdbc:mysql://localhost:3306/TodoList?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
+db.username=your_username
+db.password=your_password
+
+# 服务器配置
+server.port=8080
+
+# 应用配置
+app.name=Java Todo API
+app.version=1.0.0
+
+# 注意：
+# 1. 请不要将包含真实密码的 config.properties 文件提交到版本控制系统
+# 2. 在生产环境中，请使用强密码
+# 3. 考虑使用环境变量或密钥管理服务来存储敏感信息
