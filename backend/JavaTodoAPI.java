@@ -1,7 +1,7 @@
-import static spark.Spark.*;
-import java.sql.*;
-import java.util.*;
-import com.google.gson.*;
+import static spark.Spark.*; //Java HTTP 框架
+import java.sql.*; //Java 数据库连接
+import java.util.*; //Java 集合
+import com.google.gson.*; //把对象变成 JSON 发给前端，把前端传来的 JSON 转成 Java 对象操作
 
 public class JavaTodoAPI {
     private static final String DB_URL = "jdbc:mysql://localhost:3306/TodoList?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC";
@@ -10,9 +10,9 @@ public class JavaTodoAPI {
     private static final Gson gson = new Gson();
 
     public static void main(String[] args) {
-        port(8080); // Java HTTP 服务运行端口
+        port(8080); //Java HTTP 服务运行端口
 
-        // 启用 CORS
+        // 启用CORS
         before((request, response) -> {
             response.header("Access-Control-Allow-Origin", "*");
             response.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
@@ -28,7 +28,8 @@ public class JavaTodoAPI {
         path("/api/v1", () -> {
             // 获取所有 todos
             get("/todos", (req, res) -> {
-                res.type("application/json");
+                //路由定义，用法类似express
+                res.type("application/json"); //设置返回类型
                 try {
                     List<Todo> todos = getTodosFromDB();
                     return gson.toJson(todos);

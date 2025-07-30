@@ -184,7 +184,7 @@ export default function App() {
       <div className="input-todo">
         <textarea
           className="todo-input"
-          placeholder="Add a todo"
+          placeholder="What need to be done?"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           disabled={loading}

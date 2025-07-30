@@ -2,7 +2,8 @@
 // 负责与 Node.js 中间层通信
 
 const API_BASE_URL = 'http://localhost:3001/api';
-
+//这是 Node.js 提供的 API 接口地址
+//Node.js 会把这些请求进一步 转发 给 Java 后端
 class TodoApiService {
   // 获取所有 todos
   async getTodos() {
@@ -102,7 +103,7 @@ class TodoApiService {
 
   // 切换 todo 完成状态
   async toggleTodo(todoId, currentStatus) {
-    return this.updateTodo(todoId, { done: !currentStatus });
+    return this.updateTodo(todoId, { done: !currentStatus }); //内部调用 updateTodo() 方法
   }
 }
 

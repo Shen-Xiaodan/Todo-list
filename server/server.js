@@ -65,11 +65,14 @@ app.get('/api/todos', async (req, res) => {
 });
 
 // 创建新的 todo
-app.post('/api/todos', async (req, res) => {
+app.post('/api/todos', async (req, res) => { 
+  //路由处理器，客户发送post请求时执行这个异步函数，req是请求对象，包含发来的内容，res是响应对象包含返回的内容
   try {
     console.log('Forwarding POST /todos request to Java backend...');
     console.log('Request body:', req.body);
     
+    //使用 axios 发起 HTTP 请求。
+    //把前端发来的 req.body 原封不动转发给 Java 后端。
     const response = await axios.post(`${JAVA_BACKEND_URL}${JAVA_API_PREFIX}/todos`, req.body);
     
     console.log('Received response from Java backend:', response.status);
@@ -178,7 +181,7 @@ app.use((error, req, res, next) => {
   });
 });
 
-// 启动服务器
+// 启动服务器，终端打印提示词
 app.listen(PORT, () => {
   console.log(`\n🚀 TodoList Middleware Server is running on port ${PORT}`);
   console.log(`📍 Health check: http://localhost:${PORT}/health`);
