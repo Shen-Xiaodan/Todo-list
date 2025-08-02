@@ -34,7 +34,7 @@ class TodoApiService {
   async login(username, password) {
     try {
       const response = await fetch(`${API_BASE_URL}/login`, {
-        method: 'GET',
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -59,17 +59,22 @@ class TodoApiService {
   // 获取所有 todos
   async getTodos() {
     try {
-      const response = await fetch(`${API_BASE_URL}/todos`, {
+      const userId = localStorage.getItem('userId');
+      if (!userId) {
+        throw new Error('User not logged in');
+      }
+
+      const response = await fetch(`${API_BASE_URL}/todos?userId=${userId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         },
       });
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       const data = await response.json();
       return data;
     } catch (error) {
@@ -81,6 +86,11 @@ class TodoApiService {
   // 创建新的 todo
   async createTodo(todoText) {
     try {
+      const userId = localStorage.getItem('userId');
+      if (!userId) {
+        throw new Error('User not logged in');
+      }
+
       const response = await fetch(`${API_BASE_URL}/todos`, {
         method: 'POST',
         headers: {
@@ -88,7 +98,8 @@ class TodoApiService {
         },
         body: JSON.stringify({
           text: todoText,
-          done: false
+          done: false,
+          userId: parseInt(userId)
         }),
       });
 
@@ -108,12 +119,20 @@ class TodoApiService {
   // 更新 todo
   async updateTodo(todoId, updates) {
     try {
+      const userId = localStorage.getItem('userId');
+      if (!userId) {
+        throw new Error('User not logged in');
+      }
+
       const response = await fetch(`${API_BASE_URL}/todos/${todoId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(updates),
+        body: JSON.stringify({
+          ...updates,
+          userId: parseInt(userId)
+        }),
       });
 
       if (!response.ok) {
@@ -132,7 +151,12 @@ class TodoApiService {
   // 删除 todo
   async deleteTodo(todoId) {
     try {
-      const response = await fetch(`${API_BASE_URL}/todos/${todoId}`, {
+      const userId = localStorage.getItem('userId');
+      if (!userId) {
+        throw new Error('User not logged in');
+      }
+
+      const response = await fetch(`${API_BASE_URL}/todos/${todoId}?userId=${userId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

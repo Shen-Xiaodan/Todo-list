@@ -24,11 +24,75 @@ app.use((req, res, next) => {
 
 // 健康检查端点
 app.get('/health', (req, res) => {
-  res.json({ 
-    status: 'OK', 
+  res.json({
+    status: 'OK',
     timestamp: new Date().toISOString(),
     service: 'TodoList Middleware Server'
   });
+});
+
+// 用户注册
+app.post('/api/signup', async (req, res) => {
+  try {
+    console.log('Forwarding POST /signup request to Java backend...');
+    console.log('Request body:', req.body);
+
+    const response = await axios.post(`${JAVA_BACKEND_URL}${JAVA_API_PREFIX}/signup`, req.body);
+
+    console.log('Received response from Java backend:', response.status);
+    res.status(201).json(response.data);
+  } catch (error) {
+    console.error('Error forwarding signup request to Java backend:', error.message);
+
+    if (error.response) {
+      res.status(error.response.status).json({
+        error: 'Backend service error',
+        message: error.response.data?.message || error.message
+      });
+    } else if (error.request) {
+      res.status(503).json({
+        error: 'Backend service unavailable',
+        message: 'Unable to connect to Java backend service'
+      });
+    } else {
+      res.status(500).json({
+        error: 'Internal server error',
+        message: error.message
+      });
+    }
+  }
+});
+
+// 用户登录
+app.post('/api/login', async (req, res) => {
+  try {
+    console.log('Forwarding POST /login request to Java backend...');
+    console.log('Request body:', req.body);
+
+    const response = await axios.post(`${JAVA_BACKEND_URL}${JAVA_API_PREFIX}/login`, req.body);
+
+    console.log('Received response from Java backend:', response.status);
+    res.json(response.data);
+  } catch (error) {
+    console.error('Error forwarding login request to Java backend:', error.message);
+
+    if (error.response) {
+      res.status(error.response.status).json({
+        error: 'Backend service error',
+        message: error.response.data?.message || error.message
+      });
+    } else if (error.request) {
+      res.status(503).json({
+        error: 'Backend service unavailable',
+        message: 'Unable to connect to Java backend service'
+      });
+    } else {
+      res.status(500).json({
+        error: 'Internal server error',
+        message: error.message
+      });
+    }
+  }
 });
 
 // 获取所有 todos

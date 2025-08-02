@@ -1,4 +1,17 @@
-# Java Todo API 后端配置说明
+# Java Todo API 后端
+
+## 🔧 最新修复
+
+### 已修复的问题：
+1. **编译错误** - 修复了 Todo 构造函数参数不匹配的问题
+2. **用户ID筛选** - 现在所有 Todo 操作都会根据用户ID进行筛选和权限控制
+3. **数据安全** - 用户只能访问和操作自己的 Todo 项目
+
+### API 变更：
+- `GET /api/v1/todos` 现在需要 `userId` 查询参数
+- `POST /api/v1/todos` 现在需要在请求体中包含 `userId`
+- `PUT /api/v1/todos/:id` 现在需要在请求体中包含 `userId` 进行权限验证
+- `DELETE /api/v1/todos/:id` 现在需要 `userId` 查询参数进行权限验证
 
 ## 配置方式
 
@@ -48,12 +61,68 @@ DB_URL="jdbc:mysql://..." DB_USER="username" DB_PASSWORD="password" java JavaTod
 
 ### 4. 运行应用
 确保配置文件存在后，运行 Java 应用：
+
+#### 使用编译脚本（推荐）：
 ```bash
-javac -cp ".:gson-2.8.9.jar:mysql-connector-java-8.0.33.jar:spark-core-2.9.4.jar:spark-jetty-9.4.48.v20220622.jar:jetty-server-9.4.48.v20220622.jar:jetty-webapp-9.4.48.v20220622.jar:jetty-servlet-9.4.48.v20220622.jar:slf4j-simple-1.7.36.jar" JavaTodoAPI.java
-java -cp ".:gson-2.8.9.jar:mysql-connector-java-8.0.33.jar:spark-core-2.9.4.jar:spark-jetty-9.4.48.v20220622.jar:jetty-server-9.4.48.v20220622.jar:jetty-webapp-9.4.48.v20220622.jar:jetty-servlet-9.4.48.v20220622.jar:slf4j-simple-1.7.36.jar" JavaTodoAPI
+./compile-and-run.sh
 ```
 
-### 5. 故障排除
+#### 手动编译和运行：
+```bash
+# 编译
+javac -cp ".:mysql-connector-j-9.4.0.jar:spark-core-2.9.4.jar:gson-2.10.1.jar:slf4j-api-1.7.36.jar:slf4j-simple-1.7.36.jar:javax.servlet-api-4.0.1.jar:jetty-server-9.4.48.v20220622.jar:jetty-servlet-9.4.48.v20220622.jar:jetty-webapp-9.4.48.v20220622.jar:jetty-http-9.4.48.v20220622.jar:jetty-io-9.4.48.v20220622.jar:jetty-util-9.4.48.v20220622.jar:jetty-security-9.4.48.v20220622.jar" JavaTodoAPI.java
+
+# 运行
+java -cp ".:mysql-connector-j-9.4.0.jar:spark-core-2.9.4.jar:gson-2.10.1.jar:slf4j-api-1.7.36.jar:slf4j-simple-1.7.36.jar:javax.servlet-api-4.0.1.jar:jetty-server-9.4.48.v20220622.jar:jetty-servlet-9.4.48.v20220622.jar:jetty-webapp-9.4.48.v20220622.jar:jetty-http-9.4.48.v20220622.jar:jetty-io-9.4.48.v20220622.jar:jetty-util-9.4.48.v20220622.jar:jetty-security-9.4.48.v20220622.jar" JavaTodoAPI
+```
+
+## API 使用示例
+
+### 用户注册
+```bash
+curl -X POST "http://localhost:8080/api/v1/signup" \
+  -H "Content-Type: application/json" \
+  -d '{"username": "testuser", "password": "test123"}'
+```
+
+### 用户登录
+```bash
+curl -X POST "http://localhost:8080/api/v1/login" \
+  -H "Content-Type: application/json" \
+  -d '{"username": "testuser", "password": "test123"}'
+```
+
+### 创建 Todo（需要 userId）
+```bash
+curl -X POST "http://localhost:8080/api/v1/todos" \
+  -H "Content-Type: application/json" \
+  -d '{"text": "学习 Java", "done": false, "userId": 1}'
+```
+
+### 获取用户的 Todos（需要 userId 参数）
+```bash
+curl -X GET "http://localhost:8080/api/v1/todos?userId=1"
+```
+
+### 更新 Todo（需要 userId 进行权限验证）
+```bash
+curl -X PUT "http://localhost:8080/api/v1/todos/1" \
+  -H "Content-Type: application/json" \
+  -d '{"text": "学习 Java 完成", "done": true, "userId": 1}'
+```
+
+### 删除 Todo（需要 userId 参数进行权限验证）
+```bash
+curl -X DELETE "http://localhost:8080/api/v1/todos/1?userId=1"
+```
+
+### 5. 测试 API
+运行测试脚本：
+```bash
+./test-api.sh
+```
+
+### 6. 故障排除
 如果配置文件读取失败，应用会：
 1. 显示错误信息
 2. 使用默认配置值继续运行

@@ -20,13 +20,19 @@ export default function App() {
       setError(null);
       const response = await todoApiService.signup(username, password);
       console.log(response);
-      localStorage.setItem('token', response.token);
-      localStorage.setItem('username', username);
-      localStorage.setItem('password', password);
-      setLogin(true);
-      loadTodos();
-      setUsername('');
-      setPassword('');
+
+      // 注册成功后保存用户信息
+      if (response.success && response.user) {
+        localStorage.setItem('username', response.user.username);
+        localStorage.setItem('userId', response.user.id.toString());
+        localStorage.setItem('isLoggedIn', 'true');
+        setLogin(true);
+        loadTodos();
+        setUsername('');
+        setPassword('');
+      } else {
+        setError('Signup failed: ' + (response.message || 'Unknown error'));
+      }
     } catch (err) {
       setError('Failed to signup: ' + err.message);
       console.error('Error signing up:', err);
@@ -41,13 +47,19 @@ export default function App() {
       setError(null);
       const response = await todoApiService.login(username, password);
       console.log(response);
-      localStorage.setItem('token', response.token);
-      localStorage.setItem('username', username);
-      localStorage.setItem('password', password);
-      setLogin(true);
-      loadTodos();
-      setUsername('');
-      setPassword('');
+
+      // 检查登录是否成功
+      if (response.success && response.user) {
+        localStorage.setItem('username', response.user.username);
+        localStorage.setItem('userId', response.user.id.toString());
+        localStorage.setItem('isLoggedIn', 'true');
+        setLogin(true);
+        loadTodos();
+        setUsername('');
+        setPassword('');
+      } else {
+        setError('Login failed: Invalid username or password');
+      }
     } catch (err) {
       setError('Failed to login: ' + err.message);
       console.error('Error logging in:', err);
@@ -57,15 +69,11 @@ export default function App() {
   }
 
   const handleLogout = () => {
+    localStorage.removeItem('username');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('isLoggedIn');
     setLogin(false);
-  }
-
-  const handleUsernameChange = (e) => {
-    setUsername(e.target.value);
-  }
-
-  const handlePasswordChange = (e) => {
-    setPassword(e.target.value);
+    setTodos([]);
   }
 
   // 加载所有 todos
@@ -83,9 +91,17 @@ export default function App() {
     }
   };
 
-  // 组件挂载时加载数据
+  // 组件挂载时检查登录状态并加载数据
   useEffect(() => {
-    loadTodos();
+    const isLoggedIn = localStorage.getItem('isLoggedIn');
+    const savedUsername = localStorage.getItem('username');
+    const savedUserId = localStorage.getItem('userId');
+
+    if (isLoggedIn === 'true' && savedUsername && savedUserId) {
+      setLogin(true);
+      setUsername(savedUsername);
+      loadTodos();
+    }
   }, []);
 
   const AddTodos = async () => {
@@ -262,7 +278,17 @@ export default function App() {
       )}
 
       {login && (
-        <><div className="input-todo">
+        <>
+          <div className="user-info" style={{margin: '10px 0', textAlign: 'right'}}>
+            <span>Welcome, {localStorage.getItem('username')}!</span>
+            <button
+              onClick={handleLogout}
+              style={{marginLeft: '10px', padding: '5px 10px'}}
+            >
+              Logout
+            </button>
+          </div>
+          <div className="input-todo">
           <textarea
             className="todo-input"
             placeholder="What need to be done?"
