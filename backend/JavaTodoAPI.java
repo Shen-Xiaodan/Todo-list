@@ -85,6 +85,32 @@ public class JavaTodoAPI {
 
         // API 路由
         path("/api/v1", () -> {
+            // 用户注册
+            post("/signup", (req, res) -> {
+                res.type("application/json");
+                try {
+                    User newUser = gson.fromJson(req.body(), User.class);
+                    User createdUser = signupUser(newUser);
+                    res.status(201);
+                    return gson.toJson(createdUser);
+                } catch (Exception e) {
+                    res.status(500);
+                    return gson.toJson(Map.of("error", "Failed to signup user", "message", e.getMessage()));
+                }
+            });
+            // 用户登录
+            get("/login", (req, res) -> {
+                res.type("application/json");
+                try {
+                    User loginUser = gson.fromJson(req.body(), User.class);
+                    User loggedInUser = loginUser(loginUser);
+                    return gson.toJson(loggedInUser);
+                } catch (Exception e) {
+                    res.status(500);
+                    return gson.toJson(Map.of("error", "Failed to login user", "message", e.getMessage()));
+                }
+            });
+
             // 获取所有 todos
             get("/todos", (req, res) -> {
                 //路由定义，用法类似express
@@ -152,6 +178,84 @@ public class JavaTodoAPI {
 
         System.out.println("Java Todo API Server started on port 8080");
         System.out.println("API endpoints available at: http://localhost:8080/api/v1/todos");
+    }
+
+    // user
+    public static class User {
+        private String username;
+        private String password;
+
+        public User() {}
+
+        public User(String username, String password) {
+            this.username = username;
+            this.password = password;
+        }
+
+        // Getters and setters
+        public String getUsername() { return username; }
+        public void setUsername(String username) { this.username = username; }
+        public String getPassword() { return password; }
+        public void setPassword(String password) { this.password = password; }
+    }
+    // 用户注册
+    public static User signupUser(User newUser) throws SQLException {
+        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
+            String sql = "INSERT INTO users (username, password) VALUES (?, ?)";
+            PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+
+            stmt.setString(1, newUser.getUsername());
+            stmt.setString(2, newUser.getPassword());
+
+            int affectedRows = stmt.executeUpdate();
+            if (affectedRows == 0) {
+                throw new SQLException("Creating user failed, no rows affected.");
+            }
+
+            try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    int id = generatedKeys.getInt(1);
+                    return getUserById(id);
+                } else {
+                    throw new SQLException("Creating user failed, no ID obtained.");
+                }
+            }
+        }
+    }
+    // 用户登录
+    public static User loginUser(User loginUser) throws SQLException {
+        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
+            String sql = "SELECT * FROM users WHERE username = ? AND password = ?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, loginUser.getUsername());
+            stmt.setString(2, loginUser.getPassword());
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return new User(
+                    rs.getString("username"),
+                    rs.getString("password")
+                );
+            }
+            return null;
+        }
+    }
+    // 根据用户名获取用户
+    private static User getUserById(String username) throws SQLException {
+        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
+            String sql = "SELECT * FROM users WHERE username = ?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, username);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return new User(
+                    rs.getString("username"),
+                    rs.getString("password")
+                );
+            }
+            return null;
+        }
     }
 
     // Todo 数据类

@@ -31,6 +31,38 @@ h1 {
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+}
+.login-form input {
+  padding: 1rem;
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 48px;
+  max-height: 120px;
+  background-color: #ffffff;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+.login-form button {
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  box-shadow: 0 4px 16px rgba(108, 117, 125, 0.3);
+}
 /* 输入区域样式 */
 .input-todo {
   display: flex;

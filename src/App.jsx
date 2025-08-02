@@ -3,6 +3,9 @@ import './App.css'
 import todoApiService from './services/todoApi'
 
 export default function App() {
+  const [login, setLogin] = useState(false);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [todos, setTodos] = useState([]);
   const [input, setInput] = useState('');
   const [editIndex, setEditIndex] = useState(-1);
@@ -10,6 +13,60 @@ export default function App() {
   const [openMenuIndex, setOpenMenuIndex] = useState(-1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  const handleSignup = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await todoApiService.signup(username, password);
+      console.log(response);
+      localStorage.setItem('token', response.token);
+      localStorage.setItem('username', username);
+      localStorage.setItem('password', password);
+      setLogin(true);
+      loadTodos();
+      setUsername('');
+      setPassword('');
+    } catch (err) {
+      setError('Failed to signup: ' + err.message);
+      console.error('Error signing up:', err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const handleLogin = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await todoApiService.login(username, password);
+      console.log(response);
+      localStorage.setItem('token', response.token);
+      localStorage.setItem('username', username);
+      localStorage.setItem('password', password);
+      setLogin(true);
+      loadTodos();
+      setUsername('');
+      setPassword('');
+    } catch (err) {
+      setError('Failed to login: ' + err.message);
+      console.error('Error logging in:', err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const handleLogout = () => {
+    setLogin(false);
+  }
+
+  const handleUsernameChange = (e) => {
+    setUsername(e.target.value);
+  }
+
+  const handlePasswordChange = (e) => {
+    setPassword(e.target.value);
+  }
 
   // 加载所有 todos
   const loadTodos = async () => {
@@ -167,6 +224,29 @@ export default function App() {
     <>
       <h1>My Todo List</h1>
 
+      {!login && (
+        <div className='login-form'>
+          <input
+            type="text"
+            placeholder="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <button
+            className="signup-button"
+            onClick={handleSignup}>Sign Up</button>
+          <button
+            className="login-button"
+            onClick={handleLogin}>Login</button>
+        </div>
+      )}
+
       {/* 错误提示 */}
       {error && (
         <div className="error-message" style={{color: 'red', margin: '10px 0'}}>
@@ -181,74 +261,75 @@ export default function App() {
         </div>
       )}
 
-      <div className="input-todo">
-        <textarea
-          className="todo-input"
-          placeholder="What need to be done?"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          disabled={loading}
-        ></textarea>
-        <button
-          className="add-todo"
-          onClick={AddTodos}
-          disabled={loading || input.trim() === ''}
-        >
-          Add
-        </button>
-      </div>
-      <div className="todo-list">
-        <ul>
-          {sortedTodos().map((todo, index) => (
-            <li key={index} className={openMenuIndex === index ? 'menu-active' : ''}>
-              {editIndex === index ? (
-                <>
-                  <input
-                    type="text"
-                    value={editText}
-                    onChange={(e) => setEditText(e.target.value)}
-                  />
-                  <button onClick={handleSave}>Save</button>
-                  <button onClick={handleCancel}>Cancel</button>
-                </>
-              ) : (
-                <>
-                  <input
-                    type="checkbox"
-                    checked={todo.done}
-                    onChange={() => handleToggle(index)}
-                  />
-                  <span className={todo.done ? 'done' : ''}>{todo.text}</span>
-                  <div className={`menu-container ${openMenuIndex === index ? 'menu-open' : ''}`}>
-                    <button
-                      className={`menu-button ${openMenuIndex === index ? 'active' : ''}`}
-                      onClick={() => toggleMenu(index)}
-                    >
-                      ⋯
-                    </button>
-                    {openMenuIndex === index && (
-                      <div className="dropdown-menu">
+      {login && (
+        <><div className="input-todo">
+          <textarea
+            className="todo-input"
+            placeholder="What need to be done?"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            disabled={loading}
+          ></textarea>
+          <button
+            className="add-todo"
+            onClick={AddTodos}
+            disabled={loading || input.trim() === ''}
+          >
+            Add
+          </button>
+        </div><div className="todo-list">
+            <ul>
+              {sortedTodos().map((todo, index) => (
+                <li key={index} className={openMenuIndex === index ? 'menu-active' : ''}>
+                  {editIndex === index ? (
+                    <>
+                      <input
+                        type="text"
+                        value={editText}
+                        onChange={(e) => setEditText(e.target.value)} />
+                      <button onClick={handleSave}>Save</button>
+                      <button onClick={handleCancel}>Cancel</button>
+                    </>
+                  ) : (
+                    <>
+                      <input
+                        type="checkbox"
+                        checked={todo.done}
+                        onChange={() => handleToggle(index)} />
+                      <span className={todo.done ? 'done' : ''}>{todo.text}</span>
+                      <div className={`menu-container ${openMenuIndex === index ? 'menu-open' : ''}`}>
                         <button
-                          className="menu-item"
-                          onClick={() => handleMenuEdit(index)}
+                          className={`menu-button ${openMenuIndex === index ? 'active' : ''}`}
+                          onClick={() => toggleMenu(index)}
                         >
-                          Edit
+                          ⋯
                         </button>
-                        <button
-                          className="menu-item"
-                          onClick={() => handleMenuDelete(index)}
-                        >
-                          Delete
-                        </button>
+                        {openMenuIndex === index && (
+                          <div className="dropdown-menu">
+                            <button
+                              className="menu-item"
+                              onClick={() => handleMenuEdit(index)}
+                            >
+                              Edit
+                            </button>
+                            <button
+                              className="menu-item"
+                              onClick={() => handleMenuDelete(index)}
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
-                </>
-              )}
-            </li>
-          ))}
-        </ul>
-      </div>
+                    </>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </>
+      )
+      }
     </>
   )
 }

@@ -5,6 +5,57 @@ const API_BASE_URL = 'http://localhost:3001/api';
 //这是 Node.js 提供的 API 接口地址
 //Node.js 会把这些请求进一步 转发 给 Java 后端
 class TodoApiService {
+  // sign up
+  async signup(username, password) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/signup`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: username,
+          password: password
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error signing up:', error);
+      throw error;
+    }
+  }
+  // 用户登录
+  async login(username, password) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/login`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: username,
+          password: password
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error logging in:', error);
+      throw error;
+    }
+  }
+
   // 获取所有 todos
   async getTodos() {
     try {
