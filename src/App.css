@@ -63,6 +63,11 @@ h1 {
   white-space: nowrap;
   box-shadow: 0 4px 16px rgba(108, 117, 125, 0.3);
 }
+.login-form button:hover {
+  background: linear-gradient(135deg, #5a6268 0%, #495057 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4);
+}
 /* 输入区域样式 */
 .input-todo {
   display: flex;
@@ -284,6 +289,24 @@ input[type="checkbox"] {
 .todo-list li.menu-active {
   z-index: 10000;
   position: relative;
+}
+
+.user-info button {
+  padding: 0.5rem 1rem;
+  border: 1px solid #414e5b;
+  border-radius: 10px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  background: rgba(255, 255, 255, 0.9);}
+
+.user-info button:hover {
+  background: rgba(248, 249, 250, 0.95);
+  border-color: #adb5bd;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .menu-button {

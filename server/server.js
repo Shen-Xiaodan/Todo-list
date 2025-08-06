@@ -99,8 +99,15 @@ app.post('/api/login', async (req, res) => {
 app.get('/api/todos', async (req, res) => {
   try {
     console.log('Forwarding GET /todos request to Java backend...');
-    const response = await axios.get(`${JAVA_BACKEND_URL}${JAVA_API_PREFIX}/todos`);
-    
+    console.log('Query parameters:', req.query);
+
+    // 构建查询参数字符串
+    const queryString = new URLSearchParams(req.query).toString();
+    const url = `${JAVA_BACKEND_URL}${JAVA_API_PREFIX}/todos${queryString ? '?' + queryString : ''}`;
+
+    console.log('Request URL:', url);
+    const response = await axios.get(url);
+
     console.log('Received response from Java backend:', response.status);
     res.json(response.data);
   } catch (error) {
@@ -201,9 +208,15 @@ app.delete('/api/todos/:id', async (req, res) => {
   try {
     const todoId = req.params.id;
     console.log(`Forwarding DELETE /todos/${todoId} request to Java backend...`);
-    
-    const response = await axios.delete(`${JAVA_BACKEND_URL}${JAVA_API_PREFIX}/todos/${todoId}`);
-    
+    console.log('Query parameters:', req.query);
+
+    // 构建查询参数字符串
+    const queryString = new URLSearchParams(req.query).toString();
+    const url = `${JAVA_BACKEND_URL}${JAVA_API_PREFIX}/todos/${todoId}${queryString ? '?' + queryString : ''}`;
+
+    console.log('Request URL:', url);
+    const response = await axios.delete(url);
+
     console.log('Received response from Java backend:', response.status);
     res.json({ success: true, message: 'Todo deleted successfully' });
   } catch (error) {

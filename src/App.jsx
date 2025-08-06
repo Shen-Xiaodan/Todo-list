@@ -6,6 +6,7 @@ export default function App() {
   const [login, setLogin] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  //const [date, setDate] = useState('');
   const [todos, setTodos] = useState([]);
   const [input, setInput] = useState('');
   const [editIndex, setEditIndex] = useState(-1);

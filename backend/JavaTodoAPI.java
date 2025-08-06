@@ -16,10 +16,9 @@ public class JavaTodoAPI {
         loadConfiguration();
     }
 
-    /**
-     * 加载配置文件
-     * 优先级：环境变量 > 配置文件 > 默认值
-     */
+    
+     //加载配置文件
+     //优先级：环境变量 > 配置文件 > 默认值
     private static void loadConfiguration() {
         Properties props = new Properties();
 
@@ -54,9 +53,7 @@ public class JavaTodoAPI {
         System.out.println("Configuration loaded - Server will run on port: " + SERVER_PORT);
     }
 
-    /**
-     * 获取配置值，优先级：环境变量 > 配置文件 > 默认值
-     */
+    //获取配置值，优先级：环境变量 > 配置文件 > 默认值
     private static String getConfigValue(String envVar, String propValue, String defaultValue) {
         String envValue = System.getenv(envVar);
         if (envValue != null && !envValue.trim().isEmpty()) {
