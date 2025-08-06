@@ -1,12 +1,16 @@
 import { useState, useEffect } from 'react'
 import './App.css'
 import todoApiService from './services/todoApi'
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 export default function App() {
   const [login, setLogin] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  //const [date, setDate] = useState('');
+  const [openCalendar, setOpenCalendar] = useState(false);
+  // 让 selectedDate 存储为 Date 类型
+  const [selectedDate, setSelectedDate] = useState(new Date());
   const [todos, setTodos] = useState([]);
   const [input, setInput] = useState('');
   const [editIndex, setEditIndex] = useState(-1);
@@ -14,6 +18,7 @@ export default function App() {
   const [openMenuIndex, setOpenMenuIndex] = useState(-1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [isAnimating, setIsAnimating] = useState(false);
 
   const handleSignup = async () => {
     try {
@@ -77,12 +82,47 @@ export default function App() {
     setTodos([]);
   }
 
+  // 修改 handleDateChange 适配 react-datepicker
+  const handleDateChange = async (date) => {
+    setSelectedDate(date);
+    setOpenCalendar(false);
+    
+    // 触发淡出动画
+    setIsAnimating(true);
+    
+    // 等待淡出动画完成后再加载新数据
+    setTimeout(async () => {
+      // 格式化为 yyyy-MM-dd
+      const dateStr = date.toISOString().split('T')[0];
+      await loadTodos(dateStr);
+      
+      // 数据加载完成后触发淡入动画
+      setTimeout(() => {
+        setIsAnimating(false);
+      }, 100);
+    }, 300);
+  }
+
+  // 点击页面任意位置关闭日历
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (!event.target.closest('.date-picker')) {
+        setOpenCalendar(false);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, []);
+
   // 加载所有 todos
-  const loadTodos = async () => {
+  const loadTodos = async (dateStr = selectedDate.toISOString().split('T')[0]) => {
     try {
       setLoading(true);
       setError(null);
-      const todosData = await todoApiService.getTodos();
+      const todosData = await todoApiService.getTodos(dateStr);
       setTodos(todosData);
     } catch (err) {
       setError('Failed to load todos: ' + err.message);
@@ -105,13 +145,14 @@ export default function App() {
     }
   }, []);
 
+  // 修改 AddTodos 传递字符串日期
   const AddTodos = async () => {
     if(input.trim() === '') return;
-
     try {
       setLoading(true);
       setError(null);
-      const newTodo = await todoApiService.createTodo(input.trim());
+      const dateStr = selectedDate.toISOString().split('T')[0];
+      const newTodo = await todoApiService.createTodo(input.trim(), dateStr);
       setTodos([...todos, newTodo]);
       setInput('');
     } catch (err) {
@@ -123,7 +164,13 @@ export default function App() {
   }
 
   const sortedTodos = () => {
-    return todos.sort((a, b) => {
+    // 只返回当前选择日期的待办事项
+    const filteredTodos = todos.filter(todo => {
+      const todoDate = todo.date ? new Date(todo.date).toISOString().split('T')[0] : null;
+      return todoDate === selectedDate.toISOString().split('T')[0];
+    });
+
+    return filteredTodos.sort((a, b) => {
       if(a.done === b.done) {
         // 按创建时间排序，新的在前
         const dateA = new Date(a.createdAt || a.created_at || 0);
@@ -134,7 +181,7 @@ export default function App() {
       } else {
         return -1;
       }
-    })
+    });
   }
 
   const handleToggle = async (index) => {
@@ -272,14 +319,23 @@ export default function App() {
       )}
 
       {/* 加载状态 */}
-      {loading && (
+      {/* {loading && (
         <div className="loading-message" style={{color: 'blue', margin: '10px 0'}}>
           Loading...
         </div>
-      )}
+      )} */}
 
       {login && (
         <>
+          <div className="date-picker">
+            <DatePicker
+              selected={selectedDate}
+              onChange={handleDateChange}
+              dateFormat="yyyy-MM-dd"
+              inline
+            />
+
+          </div>
           <div className="user-info" style={{margin: '10px 0', textAlign: 'right'}}>
             <span>Welcome, {localStorage.getItem('username')}!</span>
             <button
@@ -305,54 +361,56 @@ export default function App() {
             Add
           </button>
         </div><div className="todo-list">
-            <ul>
-              {sortedTodos().map((todo, index) => (
-                <li key={index} className={openMenuIndex === index ? 'menu-active' : ''}>
-                  {editIndex === index ? (
-                    <>
-                      <input
-                        type="text"
-                        value={editText}
-                        onChange={(e) => setEditText(e.target.value)} />
-                      <button onClick={handleSave}>Save</button>
-                      <button onClick={handleCancel}>Cancel</button>
-                    </>
-                  ) : (
-                    <>
-                      <input
-                        type="checkbox"
-                        checked={todo.done}
-                        onChange={() => handleToggle(index)} />
-                      <span className={todo.done ? 'done' : ''}>{todo.text}</span>
-                      <div className={`menu-container ${openMenuIndex === index ? 'menu-open' : ''}`}>
-                        <button
-                          className={`menu-button ${openMenuIndex === index ? 'active' : ''}`}
-                          onClick={() => toggleMenu(index)}
-                        >
-                          ⋯
-                        </button>
-                        {openMenuIndex === index && (
-                          <div className="dropdown-menu">
-                            <button
-                              className="menu-item"
-                              onClick={() => handleMenuEdit(index)}
-                            >
-                              Edit
-                            </button>
-                            <button
-                              className="menu-item"
-                              onClick={() => handleMenuDelete(index)}
-                            >
-                              Delete
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                    </>
-                  )}
-                </li>
-              ))}
-            </ul>
+            <div className={`todo-list-container ${isAnimating ? 'fade-out' : 'fade-in'}`}>
+              <ul>
+                {sortedTodos().map((todo, index) => (
+                  <li key={index} className={openMenuIndex === index ? 'menu-active' : ''}>
+                    {editIndex === index ? (
+                      <>
+                        <input
+                          type="text"
+                          value={editText}
+                          onChange={(e) => setEditText(e.target.value)} />
+                        <button onClick={handleSave}>Save</button>
+                        <button onClick={handleCancel}>Cancel</button>
+                      </>
+                    ) : (
+                      <>
+                        <input
+                          type="checkbox"
+                          checked={todo.done}
+                          onChange={() => handleToggle(index)} />
+                        <span className={todo.done ? 'done' : ''}>{todo.text}</span>
+                        <div className={`menu-container ${openMenuIndex === index ? 'menu-open' : ''}`}>
+                          <button
+                            className={`menu-button ${openMenuIndex === index ? 'active' : ''}`}
+                            onClick={() => toggleMenu(index)}
+                          >
+                            ⋯
+                          </button>
+                          {openMenuIndex === index && (
+                            <div className="dropdown-menu">
+                              <button
+                                className="menu-item"
+                                onClick={() => handleMenuEdit(index)}
+                              >
+                                Edit
+                              </button>
+                              <button
+                                className="menu-item"
+                                onClick={() => handleMenuDelete(index)}
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </>
       )

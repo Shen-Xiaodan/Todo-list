@@ -57,14 +57,14 @@ class TodoApiService {
   }
 
   // 获取所有 todos
-  async getTodos() {
+  async getTodos(date) {
     try {
       const userId = localStorage.getItem('userId');
       if (!userId) {
         throw new Error('User not logged in');
       }
 
-      const response = await fetch(`${API_BASE_URL}/todos?userId=${userId}`, {
+      const response = await fetch(`${API_BASE_URL}/todos?userId=${userId}&date=${date}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -84,7 +84,7 @@ class TodoApiService {
   }
 
   // 创建新的 todo
-  async createTodo(todoText) {
+  async createTodo(todoText, date) {
     try {
       const userId = localStorage.getItem('userId');
       if (!userId) {
@@ -99,7 +99,8 @@ class TodoApiService {
         body: JSON.stringify({
           text: todoText,
           done: false,
-          userId: parseInt(userId)
+          userId: parseInt(userId),
+          date: date
         }),
       });
 

@@ -119,14 +119,18 @@ public class JavaTodoAPI {
                 //路由定义，用法类似express
                 res.type("application/json"); //设置返回类型
                 try {
+                    String date = req.queryParams("date");
                     String userIdParam = req.queryParams("userId");
                     if (userIdParam == null || userIdParam.trim().isEmpty()) {
                         res.status(400);
                         return gson.toJson(Map.of("error", "userId parameter is required"));
                     }
-
+                    if (date == null || date.trim().isEmpty()) {
+                        res.status(400);
+                        return gson.toJson(Map.of("error", "date parameter is required"));
+                    }
                     int userId = Integer.parseInt(userIdParam);
-                    List<Todo> todos = getTodosFromDB(userId);
+                    List<Todo> todos = getTodosFromDB(userId, date);
                     return gson.toJson(todos);
                 } catch (NumberFormatException e) {
                     res.status(400);
@@ -313,14 +317,16 @@ public class JavaTodoAPI {
         private String text;
         private boolean done;
         private Integer userId;
+        private String date;
 
         public Todo() {}
 
-        public Todo(int id, String text, Integer userId, boolean done) {
+        public Todo(int id, String text, Integer userId, boolean done, String date) {
             this.id = id;
             this.text = text;
             this.done = done;
             this.userId = userId;
+            this.date = date;
         }
 
         // Getters and setters
@@ -332,16 +338,18 @@ public class JavaTodoAPI {
         public void setDone(boolean done) { this.done = done; }
         public Integer getUserId() { return userId; }
         public void setUserId(Integer userId) { this.userId = userId; }
+        public String getDate() {return date; }
     }
 
-    // 获取指定用户的所有 todos
-    public static List<Todo> getTodosFromDB(int userId) throws SQLException {
+    // 获取指定用户指定日期的所有 todos
+    public static List<Todo> getTodosFromDB(int userId, String date) throws SQLException {
         List<Todo> todos = new ArrayList<>();
 
         try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
-            String sql = "SELECT id, content as text, done, user_id FROM todos WHERE user_id = ? ORDER BY id DESC";
+            String sql = "SELECT id, content as text, done, user_id, date FROM todos WHERE user_id = ? AND date = ? ORDER BY id DESC";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, userId);
+            stmt.setString(2, date);
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
@@ -349,7 +357,8 @@ public class JavaTodoAPI {
                     rs.getInt("id"),
                     rs.getString("text"),
                     rs.getInt("user_id"),
-                    rs.getBoolean("done")
+                    rs.getBoolean("done"),
+                    rs.getString("date")
                 );
                 todos.add(todo);
             }
@@ -361,12 +370,13 @@ public class JavaTodoAPI {
     // 创建新的 todo
     public static Todo createTodo(Todo newTodo) throws SQLException {
         try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
-            String sql = "INSERT INTO todos (content, done, user_id) VALUES (?, ?, ?)";
+            String sql = "INSERT INTO todos (content, done, user_id, date) VALUES (?, ?, ?, ?)";
             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
             stmt.setString(1, newTodo.getText());
             stmt.setBoolean(2, newTodo.isDone());
             stmt.setInt(3, newTodo.getUserId());
+            stmt.setString(4, newTodo.getDate());
 
             int affectedRows = stmt.executeUpdate();
             if (affectedRows == 0) {
@@ -437,7 +447,7 @@ public class JavaTodoAPI {
     // 根据 ID 获取单个 todo
     private static Todo getTodoById(int id) throws SQLException {
         try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
-            String sql = "SELECT id, content as text, done, user_id FROM todos WHERE id = ?";
+            String sql = "SELECT id, content as text, done, user_id, date FROM todos WHERE id = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
@@ -447,7 +457,8 @@ public class JavaTodoAPI {
                     rs.getInt("id"),
                     rs.getString("text"),
                     rs.getInt("user_id"),
-                    rs.getBoolean("done")
+                    rs.getBoolean("done"),
+                    rs.getString("date")
                 );
             }
             return null;

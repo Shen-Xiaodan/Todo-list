@@ -1,3 +1,67 @@
+/* 日期选择器样式 */
+.date-picker {
+  position: relative;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: center;
+}
+
+.date-picker input[type="date"] {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 1rem;
+  background: white;
+  z-index: 1000;
+  margin-top: 0.5rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  font-family: -apple-system, system-ui, BlinkMacSystemFont;
+  transition: all 0.3s ease;
+  width: auto;
+  min-width: 240px;
+  color: #2d3748;
+}
+
+.date-picker input[type="date"]::-webkit-calendar-picker-indicator {
+  background-color: transparent;
+  padding: 8px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.date-picker input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  background-color: #f0f4f8;
+}
+
+.date-picker input[type="date"]:focus {
+  outline: none;
+  border-color: #4299e1;
+  box-shadow: 0 8px 24px rgba(66, 153, 225, 0.15);
+}
+
+.date-button {
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 16px rgba(108, 117, 125, 0.3);
+}
+
+.date-button:hover {
+  background: linear-gradient(135deg, #5a6268 0%, #495057 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4);
+}
+
 /* 全局样式重置和基础设置 */
 * {
   margin: 0;
@@ -143,6 +207,22 @@ h1 {
   overflow: visible;
 }
 
+/* 待办事项列表容器动画 */
+.todo-list-container {
+  transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.todo-list-container.fade-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.todo-list-container.fade-out {
+  opacity: 0.3;
+  transform: translateY(15px);
+}
+
+/* 为每个待办事项添加进入动画 */
 .todo-list li {
   background: rgba(255, 255, 255, 0.95);
   border: 1px solid rgba(233, 236, 239, 0.5);
@@ -157,7 +237,32 @@ h1 {
   backdrop-filter: blur(10px);
   position: relative;
   overflow: visible;
+  animation: slideInUp 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+/* 待办事项进入动画 */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 为不同索引的待办事项添加延迟动画 */
+.todo-list li:nth-child(1) { animation-delay: 0.05s; }
+.todo-list li:nth-child(2) { animation-delay: 0.1s; }
+.todo-list li:nth-child(3) { animation-delay: 0.15s; }
+.todo-list li:nth-child(4) { animation-delay: 0.2s; }
+.todo-list li:nth-child(5) { animation-delay: 0.25s; }
+.todo-list li:nth-child(6) { animation-delay: 0.3s; }
+.todo-list li:nth-child(7) { animation-delay: 0.35s; }
+.todo-list li:nth-child(8) { animation-delay: 0.4s; }
+.todo-list li:nth-child(9) { animation-delay: 0.45s; }
+.todo-list li:nth-child(10) { animation-delay: 0.5s; }
 
 .todo-list li::before {
   content: '';
