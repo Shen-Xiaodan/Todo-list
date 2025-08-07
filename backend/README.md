@@ -92,12 +92,6 @@ curl -X POST "http://localhost:8080/api/v1/login" \
   -d '{"username": "testuser", "password": "test123"}'
 ```
 
-### 创建 Todo（需要 userId）
-```bash
-curl -X POST "http://localhost:8080/api/v1/todos" \
-  -H "Content-Type: application/json" \
-  -d '{"text": "学习 Java", "done": false, "userId": 1}'
-```
 
 ### 获取用户的 Todos（需要 userId 参数）
 ```bash

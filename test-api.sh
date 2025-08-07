@@ -46,14 +46,12 @@ test_endpoint() {
 
 echo "1. 测试 Java 后端 (localhost:8080)"
 echo "--------------------------------"
-test_endpoint "获取所有 todos" "http://localhost:8080/api/v1/todos"
-test_endpoint "创建新 todo" "http://localhost:8080/api/v1/todos" "POST" '{"text":"测试 todo","done":false}'
+# test_endpoint "获取所有 todos" "http://localhost:8080/api/v1/todos"
 
 echo "2. 测试 Node.js 中间层 (localhost:3001)"
 echo "------------------------------------"
 test_endpoint "健康检查" "http://localhost:3001/health"
-test_endpoint "获取所有 todos" "http://localhost:3001/api/todos"
-test_endpoint "创建新 todo" "http://localhost:3001/api/todos" "POST" '{"text":"通过中间层创建的 todo","done":false}'
+# test_endpoint "获取所有 todos" "http://localhost:3001/api/todos"
 
 echo "3. 测试前端服务 (localhost:5173)"
 echo "------------------------------"

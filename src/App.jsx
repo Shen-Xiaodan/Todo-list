@@ -187,13 +187,17 @@ export default function App() {
   const handleToggle = async (index) => {
     if(editIndex !== -1) return;
 
-    const todo = todos[index];
+    // 获取排序后的todos数组中的正确todo
+    const sortedTodosArray = sortedTodos();
+    const todo = sortedTodosArray[index];
+
     try {
       setLoading(true);
       setError(null);
       const updatedTodo = await todoApiService.toggleTodo(todo.id, todo.done);
-      const newTodos = [...todos];
-      newTodos[index] = updatedTodo;
+
+      // 在原始todos数组中找到并更新对应的todo
+      const newTodos = todos.map(t => t.id === todo.id ? updatedTodo : t);
       setTodos(newTodos);
     } catch (err) {
       setError('Failed to update todo: ' + err.message);
@@ -204,17 +208,22 @@ export default function App() {
   }
 
   const handleDelete = async (index) => {
+    // 获取排序后的todos数组中的正确todo
+    const sortedTodosArray = sortedTodos();
+    const todo = sortedTodosArray[index];
+
+    // 如果正在编辑这个todo，取消编辑状态
     if(editIndex === index){
       setEditIndex(-1);
       setEditText('');
     }
 
-    const todo = todos[index];
     try {
       setLoading(true);
       setError(null);
       await todoApiService.deleteTodo(todo.id);
-      const newTodos = todos.filter((_, i) => i !== index);
+      // 从原始todos数组中删除对应的todo
+      const newTodos = todos.filter(t => t.id !== todo.id);
       setTodos(newTodos);
     } catch (err) {
       setError('Failed to delete todo: ' + err.message);
@@ -225,18 +234,24 @@ export default function App() {
   }
 
   const handleEdit = (index) => {
+    // 获取排序后的todos数组中的正确todo
+    const sortedTodosArray = sortedTodos();
+    const todo = sortedTodosArray[index];
     setEditIndex(index);
-    setEditText(todos[index].text);
+    setEditText(todo.text);
   }
 
   const handleSave = async () =>{
     try {
       setLoading(true);
       setError(null);
-      const todo = todos[editIndex];
+      // 获取排序后的todos数组中的正确todo
+      const sortedTodosArray = sortedTodos();
+      const todo = sortedTodosArray[editIndex];
       const updatedTodo = await todoApiService.updateTodo(todo.id, { text: editText });
-      const newTodos = [...todos];
-      newTodos[editIndex] = updatedTodo;
+
+      // 在原始todos数组中找到并更新对应的todo
+      const newTodos = todos.map(t => t.id === todo.id ? updatedTodo : t);
       setTodos(newTodos);
       setEditIndex(-1);
       setEditText('');

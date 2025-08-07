@@ -12,10 +12,10 @@
   left: 50%;
   transform: translateX(-50%);
   padding: 1rem;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #e7a6e3;
   border-radius: 12px;
   font-size: 1rem;
-  background: white;
+  background: #f9f4fb;
   z-index: 1000;
   margin-top: 0.5rem;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
@@ -23,7 +23,7 @@
   transition: all 0.3s ease;
   width: auto;
   min-width: 240px;
-  color: #2d3748;
+  color: #a259c6;
 }
 
 .date-picker input[type="date"]::-webkit-calendar-picker-indicator {
@@ -40,14 +40,14 @@
 
 .date-picker input[type="date"]:focus {
   outline: none;
-  border-color: #4299e1;
-  box-shadow: 0 8px 24px rgba(66, 153, 225, 0.15);
+  border-color: #a259c6;
+  box-shadow: 0 8px 24px rgba(162, 89, 198, 0.15);
 }
 
 .date-button {
   padding: 0.75rem 1.5rem;
-  background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
-  color: white;
+  background: linear-gradient(135deg, #e7a6e3 0%, #a259c6 100%);
+  color: #fff;
   border: none;
   border-radius: 12px;
   font-size: 1rem;
@@ -57,7 +57,7 @@
 }
 
 .date-button:hover {
-  background: linear-gradient(135deg, #5a6268 0%, #495057 100%);
+  background: linear-gradient(135deg, #a259c6 0%, #c084d7 100%);
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4);
 }
@@ -71,8 +71,8 @@
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-  background: linear-gradient(135deg, #e2e4e7 0%, #c6c8ca 100%);
-  color: #2c3e50;
+  background: linear-gradient(135deg, #f3e7fa 0%, #f8c3e0 100%);
+  color: #4b2956;
   line-height: 1.6;
   min-height: 100vh;
 }
@@ -88,11 +88,11 @@ body {
 h1 {
   text-align: center;
   margin-bottom: 2.5rem;
-  font-size: 2.8rem;
-  font-weight: 200;
-  color: #34495e;
+  font-size: 3.0rem;
+  font-weight: 600;
+  color: #a259c6;
   letter-spacing: -1px;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-shadow: 0 4px 12px rgba(162, 89, 198, 0.08);
 }
 
 .login-form {
@@ -112,25 +112,25 @@ h1 {
   max-height: 120px;
   background-color: #ffffff;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 8px rgba(121, 67, 67, 0.4);
 }
 .login-form button {
   padding: 1rem 2rem;
-  background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
-  color: white;
+  background: linear-gradient(135deg, #e7a6e3 0%, #f8c3e0 100%);
+  color: #a259c6;
   border: none;
   border-radius: 12px;
   font-size: 1rem;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   white-space: nowrap;
   box-shadow: 0 4px 16px rgba(108, 117, 125, 0.3);
 }
 .login-form button:hover {
-  background: linear-gradient(135deg, #5a6268 0%, #495057 100%);
+  background: linear-gradient(135deg, #a259c6 0%, #e7a6e3 100%);
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4);
+  box-shadow: 0 6px 20px rgba(125, 111, 108, 0.4);
 }
 /* 输入区域样式 */
 .input-todo {
@@ -138,33 +138,34 @@ h1 {
   gap: 1rem;
   margin-bottom: 2.5rem;
   align-items: flex-start;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(250, 240, 255, 0.95);
   padding: 1.5rem;
   border-radius: 16px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(162, 89, 198, 0.15);
 }
 
 .todo-input {
   flex: 1;
   padding: 1rem;
-  border: 2px solid #e9ecef;
+  border: 2px solid #e3c6f7;
   border-radius: 12px;
   font-size: 1rem;
   font-family: inherit;
   resize: vertical;
   min-height: 48px;
   max-height: 120px;
-  background-color: #ffffff;
+  background-color: #f9f4fb;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 8px rgba(162, 89, 198, 0.08);
+  color: #6d3a7b;
 }
 
 .todo-input:focus {
   outline: none;
-  border-color: #6c757d;
-  box-shadow: 0 4px 16px rgba(108, 117, 125, 0.15);
+  border-color: #e7a6e3;
+  box-shadow: 0 4px 16px rgba(162, 89, 198, 0.15);
   transform: translateY(-2px);
 }
 
@@ -175,12 +176,12 @@ h1 {
 .add-todo {
   padding: 1rem 2rem;
   margin-top: 10px;
-  background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
-  color: white;
+  background: linear-gradient(135deg, #e7a6e3 0%, #f8c3e0 100%);
+  color: #a259c6;
   border: none;
   border-radius: 12px;
   font-size: 1rem;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   white-space: nowrap;
@@ -188,7 +189,7 @@ h1 {
 }
 
 .add-todo:hover {
-  background: linear-gradient(135deg, #5a6268 0%, #495057 100%);
+  background-color: #d6b4e7;
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4);
 }
@@ -224,8 +225,8 @@ h1 {
 
 /* 为每个待办事项添加进入动画 */
 .todo-list li {
-  background: rgba(255, 255, 255, 0.95);
-  border: 1px solid rgba(233, 236, 239, 0.5);
+  background: rgba(252, 244, 255, 0.98);
+  border: 1px solid rgba(226, 180, 238, 0.4);
   border-radius: 16px;
   padding: 1.25rem;
   margin-bottom: 2rem;
@@ -233,7 +234,7 @@ h1 {
   align-items: center;
   gap: 1rem;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 16px rgba(162, 89, 198, 0.08);
   backdrop-filter: blur(10px);
   position: relative;
   overflow: visible;
@@ -277,8 +278,8 @@ h1 {
 }
 
 .todo-list li:hover {
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
-  border-color: rgba(108, 117, 125, 0.3);
+  box-shadow: 0 8px 32px rgba(162, 89, 198, 0.13);
+  border-color: rgba(162, 89, 198, 0.25);
   transform: translateY(-4px);
 }
 
@@ -291,7 +292,7 @@ input[type="checkbox"] {
   width: 20px;
   height: 20px;
   cursor: pointer;
-  accent-color: #6c737d;
+  accent-color: #a259c6;
   border-radius: 4px;
 }
 
@@ -354,26 +355,29 @@ input[type="checkbox"] {
 }
 
 .todo-list li button:last-child {
-  background: linear-gradient(135deg, #868e96 0%, #6c757d 100%);
-  color: white;
-  border-color: #868e96;
+  background-color: #d0a2e8;
+  color: #572838;
+  border-color: #d0a2e8;
+  box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
 }
 
 .todo-list li button:last-child:hover {
-  background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
-  border-color: #6c757d;
+  background-color: #d0a2e8;
+  color: #4f242b;
+  border-color: #d0a2e8;
   box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
 }
 
 /* 保存和取消按钮样式 */
 .todo-list li button:nth-last-child(2) {
-  background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
-  color: white;
-  border-color: #6c757d;
+  background-color: #d0a2e8;
+  color: #4a2128;
+  border-color: #d0a2e8;
+  box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
 }
 
 .todo-list li button:nth-last-child(2):hover {
-  background: linear-gradient(135deg, #5a6268 0%, #495057 100%);
+  background-color: #d0a2e8;
   box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
 }
 
@@ -563,10 +567,10 @@ input[type="checkbox"] {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(108, 117, 125, 0.5);
+  background: rgba(162, 89, 198, 0.4);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(108, 117, 125, 0.7);
+  background: rgba(162, 89, 198, 0.7);
 }
